@@ -1,15 +1,23 @@
 name: Telegram Notification
-on: [push]
+on: [push] # 푸시(업로드)할 때마다 알림 전송
+
 jobs:
-  build:
+  notify:
     runs-on: ubuntu-latest
     steps:
-      - name: Send Message to Telegram
-        uses: appleboy/telegram-action@v1.0.1  # 최신 stable 태그로 고정
+      - name: Send Message
+        uses: appleboy/telegram-action@master
         with:
-          to: ${{ secrets.TELEGRAM_TO }}
+          to: ${{ secrets.TELEGRAM_CHAT_ID }}
           token: ${{ secrets.TELEGRAM_TOKEN }}
           message: |
-            ${{ github.actor }} 님이 코드를 푸시했습니다.
-            저장소: ${{ github.repository }}
-            내용: ${{ github.event.head_commit.message }}
+            🚀 GitHub에 새로운 푸시가 발생했습니다!
+            - 레포지토리: ${{ github.repository }}
+            - 작성자: ${{ github.actor }}
+            - 커밋 내용: ${{ github.event.commits[0].message }}
+            - 확인하기: https://github.com{{ github.repository }}/commit/${{ github.sha }}
+
+
+
+
+
