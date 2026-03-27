@@ -1,0 +1,17 @@
+name: Telegram Notification
+
+on: [push] # 푸시가 발생했을 때
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Message to Telegram
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          message: |
+            ${{ github.actor }} 님이 코드를 푸시했습니다.
+            저장소: ${{ github.repository }}
+            내용: ${{ github.event.head_commit.message }}
