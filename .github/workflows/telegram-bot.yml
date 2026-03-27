@@ -6,11 +6,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Send Message
-        uses: appleboy/telegram-action@master
+        uses: appleboy/telegram-action@v0.1.1  # 최신 버전 명시
         with:
           to: ${{ secrets.TELEGRAM_CHAT_ID }}
           token: ${{ secrets.TELEGRAM_TOKEN }}
-          message: "GitHub 연결 테스트 성공!"
+          message: "GitHub 연결 성공!"
+
 
 
 
