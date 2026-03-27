@@ -1,4 +1,4 @@
-name: ci
+name: Node.js CI
 
 on:
   push:
@@ -9,39 +9,40 @@ on:
       - "**"
 
 jobs:
-  docker:
+  # job 이름을 'docker'에서 'build-and-test'로 변경했습니다.
+  build-and-test:
     timeout-minutes: 10
     runs-on: ubuntu-latest
 
     steps:
-      # 해당 저장소의 코드를 가져옵니다.
+      # 최신 v4 버전 사용 권장 (성능 및 보안 개선)
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
-      # Node 16 버전을 사용합니다.
+      # Node.js 설정 (v4 버전 사용 및 버전 명시)
       - name: Install node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
           node-version: 18.x
           cache: 'yarn'
 
-      # 설치된 yarn을 통해 패키지를 설치합니다.
+      # 의존성 설치 (frozen-lockfile을 사용하면 더 안전합니다)
       - name: Install dependencies
-        run: yarn install
+        run: yarn install --frozen-lockfile
 
-      # 테스트 수행과 그 테스트 결과를 xml파일로 생성합니다.
+      # 테스트 수행
       - name: Run tests
         run: yarn test:report
 
-      # 테스트 결과를 담은 xml 파일을 레포트로 변환합니다.
+      # 테스트 결과를 레포트로 변환
       - name: Test Report
         uses: dorny/test-reporter@v1
-        if: success() || failure()    # run this step even if previous step failed
+        if: success() || failure()
         with:
           name: test-results
           path: junit.xml
           fail-on-error: 'false'
-          reporter: jest-junit        # Format of test results
+          reporter: jest-junit
           token: ${{ secrets.GITHUB_TOKEN }}
 
       # 빌드 성공 메세지 발송
@@ -53,16 +54,14 @@ jobs:
           token: ${{ secrets.TELEGRAM_TOKEN }}
           format: markdown
           message: |
-            Author: ${{github.actor}}
+            👤 **Author**: ${{ github.actor }}
+            ✅ **Status**: Success
+            📝 **Commit**: ${{ github.event.head_commit.message || 'Pull Request' }}
             
-            Status: 😚 **Success**
-            
-            Commit message: ${{ github.event.commits[0].message }}
-            
-            [See changes](https://github.com/${{ github.repository }}/commit/${{github.sha}}) 
+            [See changes](https://github.com/${{ github.repository }}/commit/${{ github.sha }})
 
       # 빌드 실패 메세지 발송
-      - name: Send Build Success Message
+      - name: Send Build Failure Message
         uses: appleboy/telegram-action@master
         if: failure()
         with:
@@ -70,10 +69,8 @@ jobs:
           token: ${{ secrets.TELEGRAM_TOKEN }}
           format: markdown
           message: |
-            Author: ${{github.actor}}
+            👤 **Author**: ${{ github.actor }}
+            ❌ **Status**: Failure
+            📝 **Commit**: ${{ github.event.head_commit.message || 'Pull Request' }}
             
-            Status: 😱 **Failure**
-            
-            Commit message: ${{ github.event.commits[0].message }}
-            
-            [link](https://github.com/${{ github.repository }}/actions)
+            [Check Workflow](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
