@@ -1,5 +1,5 @@
 name: Telegram Notification
-on: [push] # 푸시(업로드)할 때마다 알림 전송
+on: [push]
 
 jobs:
   notify:
@@ -10,12 +10,8 @@ jobs:
         with:
           to: ${{ secrets.TELEGRAM_CHAT_ID }}
           token: ${{ secrets.TELEGRAM_TOKEN }}
-          message: |
-            🚀 GitHub에 새로운 푸시가 발생했습니다!
-            - 레포지토리: ${{ github.repository }}
-            - 작성자: ${{ github.actor }}
-            - 커밋 내용: ${{ github.event.commits[0].message }}
-            - 확인하기: https://github.com{{ github.repository }}/commit/${{ github.sha }}
+          message: "GitHub 연결 테스트 성공!"
+
 
 
 
