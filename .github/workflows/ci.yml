@@ -24,11 +24,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 18.x
-          cache: 'yarn'
+          
 
       # 의존성 설치 (frozen-lockfile을 사용하면 더 안전합니다)
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: yarn install
 
       # 테스트 수행
       - name: Run tests
