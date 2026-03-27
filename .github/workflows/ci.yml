@@ -36,12 +36,11 @@ jobs:
 
       # 테스트 결과를 레포트로 변환
       - name: Test Report
-        uses: dorny/test-reporter@v1
-        if: success() || failure()
+        uses: dorny/test-reporter@v1.9.1
+        if: always()
         with:
           name: test-results
           path: junit.xml
-          fail-on-error: 'false'
           reporter: jest-junit
           token: ${{ secrets.GITHUB_TOKEN }}
 
